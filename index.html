@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador MRU - Distancia</title>
+  <style>
+    /* Estilos generales de la página */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* Título */
+    h2 {
+      color: #004080;
+    }
+
+    /* Estilo de etiquetas y controles */
+    label, input, button {
+      font-size: 16px;
+      margin: 5px;
+    }
+
+    /* Botón con diseño atractivo */
+    button {
+      background-color: #004080;
+      color: white;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Resultado del cálculo */
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <!-- Título principal del simulador -->
+  <h2>Simulador de distancia en MRU</h2>
+
+  <!-- Entrada para la velocidad -->
+  <label for="vel">Velocidad (m/s): </label>
+  <input type="number" id="vel"><br><br>
+
+  <!-- Entrada para el tiempo -->
+  <label for="tiempo">Tiempo (s): </label>
+  <input type="number" id="tiempo"><br><br>
+
+  <!-- Botón para calcular la distancia -->
+  <button onclick="calcular()">Calcular distancia</button>
+
+  <!-- Resultado mostrado al usuario -->
+  <p id="resultado"></p>
+
+  <script>
+    // Función que realiza el cálculo de distancia
+    function calcular() {
+      let v = parseFloat(document.getElementById("vel").value);   // Obtiene velocidad
+      let t = parseFloat(document.getElementById("tiempo").value); // Obtiene tiempo
+      let resultado = document.getElementById("resultado");        // Área de resultado
+
+      // Validación: si hay valores inválidos
+      if (isNaN(v) || isNaN(t)) {
+        resultado.innerText = "⚠️ Ingresa valores válidos para velocidad y tiempo.";
+        return;
+      }
+
+      // Validación: si hay números negativos
+      if (v < 0 || t < 0) {
+        resultado.innerText = "⚠️ Los valores no pueden ser negativos.";
+        return;
+      }
+
+      // Cálculo de distancia: MRU = velocidad × tiempo
+      let d = v * t;
+      resultado.innerText = "Distancia = " + d.toFixed(2) + " metros";
+    }
+  </script>
+</body>
+</html>
