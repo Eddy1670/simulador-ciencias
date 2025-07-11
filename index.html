@@ -2,118 +2,156 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simulador MRU - Distancia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador MRU</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* Reset y layout */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #e0f7fa, #e8f5e9);
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: flex-start;
+      display: flex; flex-direction: column; align-items: center;
       padding: 20px;
     }
-    .contenedor {
-      max-width: 600px;
+    .panel {
+      width: 100%; max-width: 500px;
+      background: white; border-radius: 8px;
+      padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    h2 {
-      color: #0d47a1;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 5px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+    h2 { color: #0d47a1; margin-bottom: 10px; text-align: center; }
+    label { display: block; margin: 10px 0 5px; font-weight: bold; }
+    input { width: 100%; padding: 8px; border:1px solid #ccc; border-radius:4px; }
     button {
-      margin-top: 15px;
-      background-color: #01579b;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      margin-top: 15px; width: 100%; padding:10px;
+      background: #0288d1; color:white; border:none; border-radius:6px;
+      font-size:16px; cursor:pointer;
     }
-    button:hover {
-      background-color: #0277bd;
+    button:hover { background: #0277bd; }
+    #resultado { margin-top:15px; font-size:1.2em; color: #2e7d32; text-align:center; }
+
+    /* Área de simulación */
+    .simulation-area {
+      position: relative; width: 100%; height: 80px;
+      background: #f1f8e9; border:2px solid #c5e1a5;
+      border-radius: 8px; overflow:hidden; margin:20px 0;
     }
-    #resultado {
-      margin-top: 20px;
-      font-size: 1.4em;
-      color: green;
-      font-weight: bold;
+    #mobile {
+      position: absolute; top:50%; left:0;
+      transform: translateY(-50%);
+      font-size:48px;
+      transition: left linear;
     }
-    .explicacion {
-      max-width: 500px;
-      background-color: #ffffffcc;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #cfd8dc;
+
+    /* Gráfico */
+    #chart-container { width:100%; margin-top:20px; }
+
+    /* Ejercicio */
+    .ejercicio {
+      background: #fff3e0; border:1px solid #ffe0b2;
+      padding:15px; border-radius:6px; width:100%; max-width:500px;
+      font-size:1em; color:#bf360c;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body { padding:10px; }
+      #mobile { font-size:36px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sección izquierda: Simulador -->
-  <div class="contenedor">
-    <h2>Simulador de distancia en MRU</h2>
+  <div class="panel">
+    <h2>Simulador de MRU</h2>
 
     <label for="vel">Velocidad (m/s):</label>
-    <input type="number" id="vel" placeholder="Ej. 10" />
+    <input type="number" id="vel" placeholder="p.ej. 5" />
 
     <label for="tiempo">Tiempo (s):</label>
-    <input type="number" id="tiempo" placeholder="Ej. 5" />
+    <input type="number" id="tiempo" placeholder="p.ej. 4" />
 
-    <button onclick="calcular()">Calcular distancia</button>
-
+    <button onclick="startSimulation()">Simular Movimiento</button>
     <p id="resultado"></p>
+
+    <!-- Área de simulación -->
+    <div class="simulation-area">
+      <div id="mobile">🚗</div>
+    </div>
+
+    <!-- Gráfico velocidad vs distancia -->
+    <div id="chart-container">
+      <canvas id="vdChart"></canvas>
+    </div>
   </div>
 
-  <!-- Sección derecha: Explicación del MRU -->
-  <div class="explicacion">
-    <h2>¿Qué es el MRU?</h2>
+  <!-- Ejercicio de comprobación -->
+  <div class="ejercicio">
+    <h2>Ejercicio</h2>
     <p>
-      El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> es un tipo de movimiento en línea recta donde la velocidad permanece constante y no hay aceleración.
-    </p>
-    <p>
-      La fórmula para calcular la distancia recorrida es:
-    </p>
-    <p style="text-align:center; font-size: 1.2em;">
-      <strong>d = v × t</strong>
-    </p>
-    <ul>
-      <li><strong>d</strong>: distancia en metros (m)</li>
-      <li><strong>v</strong>: velocidad en metros por segundo (m/s)</li>
-      <li><strong>t</strong>: tiempo en segundos (s)</li>
-    </ul>
-    <p>
-      Este simulador permite que puedas experimentar cómo cambia la distancia en función de la velocidad y el tiempo.
+      Un atleta corre con velocidad constante de 
+      <strong>6 m/s</strong> durante <strong>7 s</strong>. 
+      ¿Qué distancia recorre?<br/>
+      <em>Usa el simulador para comprobar tu respuesta.</em>
     </p>
   </div>
 
   <script>
-    // Función que calcula la distancia en MRU: d = v × t
-    function calcular() {
-      let v = parseFloat(document.getElementById("vel").value);
-      let t = parseFloat(document.getElementById("tiempo").value);
-      let d = v * t;
+    let chart; // variable global para Chart.js
 
-      if (isNaN(v) || isNaN(t) || v < 0 || t < 0) {
-        document.getElementById("resultado").innerText =
-          "⚠️ Por favor, ingresa valores válidos y positivos.";
+    function startSimulation() {
+      const v = parseFloat(document.getElementById('vel').value);
+      const t = parseFloat(document.getElementById('tiempo').value);
+      const res = document.getElementById('resultado');
+      const mobile = document.getElementById('mobile');
+      const area = document.querySelector('.simulation-area');
+      const maxPx = area.clientWidth - mobile.clientWidth;
+
+      if (isNaN(v) || isNaN(t) || v<0 || t<0) {
+        res.innerText = '⚠️ Ingresa valores válidos y positivos.';
         return;
       }
 
-      document.getElementById("resultado").innerText =
-        "Distancia = " + d.toFixed(2) + " metros";
+      // cálculo
+      const d = v * t;
+      res.innerText = `Distancia = ${d.toFixed(2)} metros`;
+
+      // animación: escalar distancia a pixeles (suponemos 100 m = ancho total)
+      const px = Math.min(d / 100 * maxPx, maxPx);
+      mobile.style.transition = `left ${t}s linear`;
+      mobile.style.left = `${px}px`;
+
+      // preparar datos para el gráfico
+      const data = {
+        labels: [0, t],
+        datasets: [{
+          label: 'Velocidad (m/s)',
+          data: [0, d],
+          fill: false,
+          borderColor: '#ef6c00',
+          tension: 0
+        }]
+      };
+
+      if (chart) {
+        chart.data = data;
+        chart.update();
+      } else {
+        const ctx = document.getElementById('vdChart').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'line',
+          data,
+          options: {
+            scales: {
+              x: { title: { display:true, text:'Tiempo (s)' } },
+              y: { title: { display:true, text:'Distancia (m)' } }
+            }
+          }
+        });
+      }
     }
   </script>
 </body>
 </html>
+
