@@ -1,20 +1,35 @@
+/* Fondo con patrón suave */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f0f8ff;
+  background: linear-gradient(to right, #e0f7fa, #f1f8e9);
   padding: 40px;
   text-align: center;
+  margin: 0;
 }
 
-h2 {
-  color: #005f73;
+/* Encabezado visual */
+header {
+  background-color: #006064;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
 }
 
+header .logo {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+/* Estilo de etiquetas */
 label {
   display: block;
   margin-top: 15px;
   font-weight: bold;
+  color: #004d40;
 }
 
+/* Inputs */
 input {
   padding: 8px;
   margin-top: 5px;
@@ -23,10 +38,11 @@ input {
   width: 200px;
 }
 
+/* Botón */
 button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #0a9396;
+  background-color: #00897b;
   color: white;
   border: none;
   border-radius: 8px;
@@ -35,12 +51,13 @@ button {
 }
 
 button:hover {
-  background-color: #007f8c;
+  background-color: #00695c;
 }
 
+/* Resultado */
 #resultado {
   margin-top: 20px;
-  font-size: 20px;
-  color: #001219;
+  font-size: 22px;
+  color: #1b5e20;
   font-weight: bold;
 }
