@@ -4,88 +4,123 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Simulador de Movimientos</title>
+  <!-- Cargamos Chart.js para los gráficos dinámicos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* —————— Estilos Globales —————— */
-    * { box-sizing:border-box; margin:0; padding:0; }
+    /* ===== Estilos Globales ===== */
+    * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      font-family:'Segoe UI',sans-serif;
-      background:linear-gradient(to right,#e0f7fa,#e8f5e9);
-      padding:20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e8f5e9);
+      padding: 20px;
     }
-    h1 { text-align:center; color:#0d47a1; margin-bottom:20px; }
+    h1 { text-align:center; margin-bottom:20px; color:#0d47a1; }
 
-    /* ————— Selector de movimiento ————— */
+    /* ===== Selector de movimiento ===== */
     #movement-select {
-      display:block; margin:0 auto 30px;
-      padding:10px; font-size:1em;
-      border:1px solid #ccc; border-radius:6px;
+      display: block;
+      margin: 0 auto 30px;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
-    /* ————— Wrapper teoría + simulación ————— */
+    /* ===== Contenedor principal: teoría + simulación ===== */
     .wrapper {
-      display:flex; flex-wrap:wrap; gap:20px;
-      justify-content:center; align-items:flex-start;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
     }
     .explicacion, .panel {
-      background:white; border-radius:8px;
-      padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
-      flex:1 1 300px; max-width:500px;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex: 1 1 300px;
+      max-width: 500px;
     }
 
-    /* ————— Bloque de teoría con animación ————— */
-    .explicacion h2 { color:#006064; margin-bottom:10px; }
-    .explicacion p, .explicacion ul { margin-bottom:10px; line-height:1.4; }
+    /* ===== Bloque de teoría ===== */
+    .explicacion h2 {
+      color: #006064;
+      margin-bottom:10px;
+    }
+    .explicacion p, .explicacion ul {
+      margin-bottom:10px;
+      line-height:1.4;
+    }
     .explicacion ul { padding-left:20px; }
-    .didactic {
-      position: relative; margin-top:20px;
-      height:120px; background:#f7f7f7; border:1px dashed #bbb;
-      border-radius:6px; overflow:hidden;
-    }
-    .didactic-message {
-      position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
-      background:rgba(255,255,255,0.8); padding:4px 8px;
-      font-size:0.9em; border-radius:4px;
-    }
 
-    /* Animación MRU: bola desplazándose    */
-    @keyframes mruAnim { from { left:0; } to { left:calc(100% - 20px); } }
-    .mru-dot {
-      position:absolute; top:50%; left:0;
-      width:20px; height:20px; background:#ef6c00;
-      border-radius:50%; transform:translateY(-50%);
-      animation:mruAnim 3s linear infinite;
+    /* ===== Bloque de simulación ===== */
+    .panel h2 {
+      color: #0d47a1;
+      text-align:center;
+      margin-bottom:15px;
     }
-
-    /* ————— Resto de estilos simulación y gráfico ————— */
-    .panel h2 { text-align:center; color:#0d47a1; margin-bottom:15px; }
-    .panel label { display:block; margin:10px 0 5px; font-weight:bold; color:#004d40; }
-    .panel input { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
+    .panel label {
+      display:block;
+      margin:10px 0 5px;
+      font-weight:bold;
+      color:#004d40;
+    }
+    .panel input {
+      width:100%;
+      padding:8px;
+      border:1px solid #ccc;
+      border-radius:4px;
+    }
     .panel button {
-      margin-top:15px; width:100%; padding:10px;
-      background:#0288d1; color:white; border:none; border-radius:6px;
-      font-size:16px; cursor:pointer;
+      margin-top:15px;
+      width:100%;
+      padding:10px;
+      background:#0288d1;
+      color:white;
+      border:none;
+      border-radius:6px;
+      font-size:16px;
+      cursor:pointer;
     }
     .panel button:hover { background:#0277bd; }
-    #resultado { margin-top:15px; text-align:center; font-size:1.2em; color:#2e7d32; }
+    #resultado {
+      margin-top:15px;
+      font-size:1.2em;
+      color:#2e7d32;
+      text-align:center;
+    }
     .simulation-area {
-      position:relative; width:100%; height:80px;
-      background:#f1f8e9; border:2px solid #c5e1a5;
-      border-radius:8px; overflow:hidden; margin:20px 0;
-      display:none;
+      position: relative;
+      width:100%; height:80px;
+      background:#f1f8e9;
+      border:2px solid #c5e1a5;
+      border-radius:8px;
+      overflow:hidden;
+      margin:20px 0;
     }
     #mobile {
-      position:absolute; top:50%; left:0; transform:translateY(-50%);
-      font-size:48px; transition:left linear;
+      position:absolute;
+      top:50%; left:0;
+      transform: translateY(-50%);
+      font-size:48px;
+      transition: left linear;
     }
-    #chart-container { width:100%; margin-top:20px; }
+    #chart-container {
+      width:100%;
+      margin-top:20px;
+    }
     .ejercicio {
-      background:#fff3e0; border:1px solid #ffe0b2;
-      padding:15px; border-radius:6px; margin-top:20px;
-      font-size:1em; color:#bf360c;
+      background:#fff3e0;
+      border:1px solid #ffe0b2;
+      padding:15px;
+      border-radius:6px;
+      margin-top:20px;
+      font-size:1em;
+      color:#bf360c;
     }
 
-    /* ————— Responsive ————— */
+    /* ===== Responsive ===== */
     @media (max-width:600px) {
       #mobile { font-size:36px; }
       .wrapper { flex-direction:column; }
@@ -94,49 +129,408 @@
 </head>
 <body>
   <h1>Simulador de Movimientos</h1>
+
+  <!-- Selector de tipo de movimiento -->
   <select id="movement-select">
     <option value="mru">Movimiento Rectilíneo Uniforme</option>
-    <!-- …otros tipos… -->
+    <option value="mruv">Movimiento Rectilíneo Uniformemente Variado</option>
+    <option value="mcu">Movimiento Circular Uniforme</option>
+    <option value="mcuv">Movimiento Circular Uniformemente Variado</option>
+    <option value="parabolico">Movimiento Parabólico</option>
+    <option value="mas">Movimiento Armónico Simple</option>
+    <option value="periodico">Movimiento Periódico</option>
+    <option value="oscilatorio">Movimiento Oscilatorio</option>
   </select>
 
   <div class="wrapper">
-    <!-- Teoría + Animación didáctica -->
+    <!-- ===== Teoría ===== -->
     <div class="explicacion" id="theory">
-      <h2>¿Qué es el MRU?</h2>
-      <p>
-        Cuando un móvil se desplaza a la misma velocidad, siempre recorrerá
-        espacios iguales en intervalos de tiempo iguales. Técnicamente, su
-        aceleración es cero y su rapidez no cambia.
-      </p>
-      <p style="text-align:center;font-size:1.2em;"><strong>d = v × t</strong></p>
-      <ul>
-        <li><strong>d</strong>: distancia (m)</li>
-        <li><strong>v</strong>: velocidad (m/s)</li>
-        <li><strong>t</strong>: tiempo (s)</li>
-      </ul>
-
-      <!-- Contenedor de animación didáctica -->
-      <div class="didactic" id="didactic-mru">
-        <!-- La bolita animada -->
-        <div class="mru-dot"></div>
-        <!-- Mensaje explicativo -->
-        <div class="didactic-message">Velocidad constante → trayectorias iguales</div>
-      </div>
+      <!-- Se rellenará dinámicamente -->
     </div>
 
-    <!-- Panel interactivo (igual al anterior)… -->
+    <!-- ===== Simulación y Gráfico ===== -->
     <div class="panel">
-      <h2>Movimiento Rectilíneo Uniforme</h2>
-      <!-- …controles, simulación y gráfico… -->
+      <h2 id="panel-title"></h2>
+
+      <!-- Controles de entrada -->
+      <div id="controls"></div>
+
+      <!-- Resultado textual -->
+      <p id="resultado"></p>
+
+      <!-- Animación de móvil (solo MRU) -->
+      <div class="simulation-area" id="sim-area">
+        <div id="mobile">🚗</div>
+      </div>
+
+      <!-- Gráfico dinámico -->
+      <div id="chart-container">
+        <canvas id="movementChart"></canvas>
+      </div>
+
+      <!-- Ejercicio para comprobar -->
+      <div class="ejercicio" id="exercise">
+        <!-- Se rellenará dinámicamente -->
+      </div>
     </div>
   </div>
 
   <script>
-    // Inicialización mínima para MRU
-    document.getElementById('movement-select')
-      .addEventListener('change', e => {
-        // Aquí recargarías teoría/animación según tipo
-      });
+  // ===== Variables globales =====
+  let chart;
+
+  // ===== Función para cargar cada módulo =====
+  function loadModule(type) {
+    const theory = document.getElementById('theory');
+    const panelTitle = document.getElementById('panel-title');
+    const controls = document.getElementById('controls');
+    const exercise = document.getElementById('exercise');
+    const simArea = document.getElementById('sim-area');
+    const mobile = document.getElementById('mobile');
+
+    // Limpiar secciones
+    theory.innerHTML = '';
+    controls.innerHTML = '';
+    exercise.innerHTML = '';
+    document.getElementById('resultado').innerText = '';
+    mobile.style.left = '0px';
+    simArea.style.display = 'none';
+
+    // ===== MRU =====
+    if (type === 'mru') {
+      panelTitle.innerText = 'Movimiento Rectilíneo Uniforme';
+      theory.innerHTML = `
+        <h2>¿Qué es el MRU?</h2>
+        <p>
+          Cuando un móvil se desplaza a la misma velocidad, siempre recorrerá
+          espacios iguales en intervalos de tiempo iguales.
+          Técnicamente, su aceleración es cero y su velocidad permanece constante.
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>d = v × t</strong></p>
+        <ul>
+          <li><strong>d</strong>: distancia (m)</li>
+          <li><strong>v</strong>: velocidad (m/s)</li>
+          <li><strong>t</strong>: tiempo (s)</li>
+        </ul>
+      `;
+      controls.innerHTML = `
+        <label for="vel">Velocidad (m/s):</label>
+        <input type="number" id="vel" placeholder="p.ej. 5" />
+        <label for="tiempo">Tiempo (s):</label>
+        <input type="number" id="tiempo" placeholder="p.ej. 4" />
+        <button onclick="simulateMRU()">Simular MRU</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio MRU</h2>
+        <p>
+          Un ciclista mantiene 6 m/s durante 8 s. ¿Qué distancia recorre?
+          Usa el simulador para comprobar tu respuesta.
+        </p>
+      `;
+      // Mostrar área de animación
+      simArea.style.display = 'block';
+    }
+
+    // ===== MRUV =====
+    if (type === 'mruv') {
+      panelTitle.innerText = 'Movimiento Rectilíneo Uniformemente Variado';
+      theory.innerHTML = `
+        <h2>¿Qué es el MRUV?</h2>
+        <p>
+          Aquí la velocidad cambia de forma constante: cada segundo
+          la velocidad aumenta (o disminuye) en la misma cantidad.
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>d = v₀·t + ½·a·t²</strong></p>
+        <ul>
+          <li><strong>v₀</strong>: velocidad inicial (m/s)</li>
+          <li><strong>a</strong>: aceleración constante (m/s²)</li>
+          <li><strong>t</strong>: tiempo (s)</li>
+        </ul>
+      `;
+      controls.innerHTML = `
+        <label for="v0">Velocidad inicial v₀ (m/s):</label>
+        <input type="number" id="v0" placeholder="p.ej. 0" />
+        <label for="a">Aceleración a (m/s²):</label>
+        <input type="number" id="a" placeholder="p.ej. 2" />
+        <label for="t2">Tiempo (s):</label>
+        <input type="number" id="t2" placeholder="p.ej. 5" />
+        <button onclick="simulateMRUV()">Simular MRUV</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio MRUV</h2>
+        <p>
+          Un coche parte desde reposo con aceleración 3 m/s² durante 4 s.
+          ¿Qué distancia recorre? Compruébalo en el simulador.
+        </p>
+      `;
+    }
+
+    // ===== MCU =====
+    if (type === 'mcu') {
+      panelTitle.innerText = 'Movimiento Circular Uniforme';
+      theory.innerHTML = `
+        <h2>¿Qué es el MCU?</h2>
+        <p>
+          Un móvil recorre una trayectoria circular a velocidad angular constante.
+          El módulo de su velocidad permanece fijo, cambia solo la dirección.
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>θ = ω·t</strong></p>
+        <ul>
+          <li><strong>θ</strong>: ángulo (rad)</li>
+          <li><strong>ω</strong>: velocidad angular (rad/s)</li>
+        </ul>
+      `;
+      controls.innerHTML = `
+        <label for="omega">Velocidad angular ω (rad/s):</label>
+        <input type="number" id="omega" placeholder="p.ej. 1" />
+        <label for="t3">Tiempo (s):</label>
+        <input type="number" id="t3" placeholder="p.ej. 10" />
+        <button onclick="simulateMCU()">Simular MCU</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio MCU</h2>
+        <p>
+          Un objeto gira a 0.5 rad/s. ¿Cuál es el ángulo tras 12 s?
+        </p>
+      `;
+    }
+
+    // ===== MCUV =====
+    if (type === 'mcuv') {
+      panelTitle.innerText = 'Movimiento Circular Uniformemente Variado';
+      theory.innerHTML = `
+        <h2>¿Qué es el MCUV?</h2>
+        <p>
+          La velocidad angular cambia uniformemente: acelera (o desacelera) 
+          a razón constante.
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>θ = ω₀·t + ½·α·t²</strong></p>
+        <ul>
+          <li><strong>ω₀</strong>: velocidad angular inicial (rad/s)</li>
+          <li><strong>α</strong>: aceleración angular (rad/s²)</li>
+          <li><strong>t</strong>: tiempo (s)</li>
+        </ul>
+      `;
+      controls.innerHTML = `
+        <label for="omega0">ω₀ (rad/s):</label>
+        <input type="number" id="omega0" placeholder="p.ej. 0" />
+        <label for="alpha">α (rad/s²):</label>
+        <input type="number" id="alpha" placeholder="p.ej. 0.2" />
+        <label for="t4">Tiempo (s):</label>
+        <input type="number" id="t4" placeholder="p.ej. 8" />
+        <button onclick="simulateMCUV()">Simular MCUV</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio MCUV</h2>
+        <p>
+          Un disco parte desde reposo con α = 0.1 rad/s² durante 20 s.
+          ¿Qué ángulo gira? Compruébalo.
+        </p>
+      `;
+    }
+
+    // ===== Movimiento Parabólico =====
+    if (type === 'parabolico') {
+      panelTitle.innerText = 'Movimiento Parabólico';
+      theory.innerHTML = `
+        <h2>¿Qué es el Movimiento Parabólico?</h2>
+        <p>
+          Trayectoria de un proyectil bajo la acción de la gravedad.
+          El movimiento horizontal es MRU y el vertical MRUV.
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>
+          x = v₀·cos(θ)·t ;  y = v₀·sin(θ)·t – ½·g·t²
+        </strong></p>
+        <ul>
+          <li><strong>v₀</strong>: velocidad inicial (m/s)</li>
+          <li><strong>θ</strong>: ángulo de lanzamiento</li>
+          <li><strong>g</strong>: 9.81 m/s²</li>
+        </ul>
+      `;
+      controls.innerHTML = `
+        <label for="v5">v₀ (m/s):</label>
+        <input type="number" id="v5" placeholder="p.ej. 20" />
+        <label for="theta">Ángulo θ (°):</label>
+        <input type="number" id="theta" placeholder="p.ej. 45" />
+        <label for="t5">Tiempo (s):</label>
+        <input type="number" id="t5" placeholder="p.ej. 2" />
+        <button onclick="simulateParabolico()">Simular Parabólico</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio Parabólico</h2>
+        <p>
+          Lanzas un objeto a 15 m/s con θ = 60°. ¿Dónde está a los 2 s?
+        </p>
+      `;
+    }
+
+    // ===== Movimiento Armónico Simple =====
+    if (type === 'mas') {
+      panelTitle.innerText = 'Movimiento Armónico Simple';
+      theory.innerHTML = `
+        <h2>¿Qué es el MAS?</h2>
+        <p>
+          Oscilación donde la fuerza restauradora es proporcional al
+          desplazamiento (como un molinete o un péndulo pequeño).
+        </p>
+        <p style="text-align:center;font-size:1.2em;"><strong>
+          x = A·cos(ω·t + φ)
+        </strong></p>
+      `;
+      controls.innerHTML = `
+        <label for="A">Amplitud A (m):</label>
+        <input type="number" id="A" placeholder="p.ej. 1" />
+        <label for="omega2">ω (rad/s):</label>
+        <input type="number" id="omega2" placeholder="p.ej. 2" />
+        <label for="t6">Tiempo (s):</label>
+        <input type="number" id="t6" placeholder="p.ej. 1" />
+        <button onclick="simulateMAS()">Simular MAS</button>
+      `;
+      exercise.innerHTML = `
+        <h2>Ejercicio MAS</h2>
+        <p>
+          Un objeto oscila con A = 2 m y ω = 1.5 rad/s.
+          ¿Cuál es su posición a los 3 s?
+        </p>
+      `;
+    }
+
+    // ===== Movimiento Periódico =====
+    if (type === 'periodico') {
+      panelTitle.innerText = 'Movimiento Periódico';
+      theory.innerHTML = `
+        <h2>¿Qué es el Movimiento Periódico?</h2>
+        <p>
+          Repite su trayectoria en intervalos de tiempo iguales
+          (ej. péndulo, masas acopladas).
+        </p>
+      `;
+      controls.innerHTML = `<p style="text-align:center;">Este movimiento coincide con el MAS.</p>`;
+      exercise.innerHTML = `
+        <h2>Ejercicio Periódico</h2>
+        <p>
+          Describe un ejemplo cotidiano de Movimiento Periódico.
+        </p>
+      `;
+    }
+
+    // ===== Movimiento Oscilatorio =====
+    if (type === 'oscilatorio') {
+      panelTitle.innerText = 'Movimiento Oscilatorio';
+      theory.innerHTML = `
+        <h2>¿Qué es el Movimiento Oscilatorio?</h2>
+        <p>
+          Es un subtipo de MAS donde el objeto cruza su punto de equilibrio
+          de forma repetida.
+        </p>
+      `;
+      controls.innerHTML = `<p style="text-align:center;">Ver MAS para simular.</p>`;
+      exercise.innerHTML = `
+        <h2>Ejercicio Oscilatorio</h2>
+        <p>
+          Menciona un dispositivo que utilice Movimiento Oscilatorio.
+        </p>
+      `;
+    }
+
+    // ===== Crear o actualizar gráfico genérico =====
+    createChart(type);
+  }
+
+  // ===== Funciones de simulación específicas =====
+  function simulateMRU() {
+    const v = +document.getElementById('vel').value;
+    const t = +document.getElementById('tiempo').value;
+    const d = v*t;
+    document.getElementById('resultado').innerText =
+      isNaN(d)? '⚠️ Valores inválidos.' : `Distancia = ${d.toFixed(2)} m`;
+    animateMobile(d, t);
+    updateChart([0, t], [0, d], 'Distancia (m)');
+  }
+  function simulateMRUV() {
+    const v0 = +document.getElementById('v0').value;
+    const a  = +document.getElementById('a').value;
+    const t  = +document.getElementById('t2').value;
+    const d = v0*t + 0.5*a*t*t;
+    document.getElementById('resultado').innerText =
+      `Distancia = ${d.toFixed(2)} m`;
+    updateChart([0, t], [0, d], 'Distancia (m)');
+  }
+  function simulateMCU() {
+    const ω = +document.getElementById('omega').value;
+    const t = +document.getElementById('t3').value;
+    const θ = ω*t;
+    document.getElementById('resultado').innerText =
+      `Ángulo = ${θ.toFixed(2)} rad`;
+    updateChart([0, t], [0, θ], 'Ángulo (rad)');
+  }
+  function simulateMCUV() {
+    const ω0 = +document.getElementById('omega0').value;
+    const α  = +document.getElementById('alpha').value;
+    const t  = +document.getElementById('t4').value;
+    const θ = ω0*t + 0.5*α*t*t;
+    document.getElementById('resultado').innerText =
+      `Ángulo = ${θ.toFixed(2)} rad`;
+    updateChart([0, t], [0, θ], 'Ángulo (rad)');
+  }
+  function simulateParabolico() {
+    const v0 = +document.getElementById('v5').value;
+    const θdeg = +document.getElementById('theta').value;
+    const t = +document.getElementById('t5').value;
+    const θ = θdeg*Math.PI/180;
+    const x = v0*Math.cos(θ)*t;
+    const y = v0*Math.sin(θ)*t - 0.5*9.81*t*t;
+    document.getElementById('resultado').innerText =
+      `x = ${x.toFixed(2)} m, y = ${y.toFixed(2)} m`;
+    updateChart([x],[y],'y vs x','scatter');
+  }
+  function simulateMAS() {
+    const A = +document.getElementById('A').value;
+    const ω = +document.getElementById('omega2').value;
+    const t = +document.getElementById('t6').value;
+    const x = A * Math.cos(ω*t);
+    document.getElementById('resultado').innerText =
+      `Posición = ${x.toFixed(2)} m`;
+    updateChart([0,t],[0,x],'Posición (m)');
+  }
+
+  // ===== Animación del móvil para MRU =====
+  function animateMobile(d, t) {
+    const mobile = document.getElementById('mobile');
+    const area = document.querySelector('.simulation-area');
+    const maxPx = area.clientWidth - mobile.clientWidth;
+    const px = Math.min(d/100*maxPx, maxPx);
+    mobile.style.transition = `left ${t}s linear`;
+    mobile.style.left = px + 'px';
+    document.getElementById('sim-area').style.display = 'block';
+  }
+
+  // ===== Crear o actualizar gráfico =====
+  function createChart(type) {
+    const ctx = document.getElementById('movementChart').getContext('2d');
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: [], datasets: [] },
+      options: {
+        scales: {
+          x: { title: { display:true, text:'Tiempo (s)' } },
+          y: { title: { display:true, text:'Magnitud' } }
+        }
+      }
+    });
+  }
+  function updateChart(labels, data, label, mode='line') {
+    chart.config.type = mode;
+    chart.data.labels = labels;
+    chart.data.datasets = [{ label, data, fill:false, borderColor:'#ef6c00', tension:0 }];
+    chart.update();
+  }
+
+  // ===== Inicializar módulo por defecto =====
+  document.getElementById('movement-select')
+    .addEventListener('change', e => loadModule(e.target.value));
+  loadModule('mru');
   </script>
 </body>
 </html>
