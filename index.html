@@ -1,88 +1,118 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Simulador MRU - Distancia</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    /* Estilos generales de la página */
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f4f4f4;
-      color: #333;
+      background: linear-gradient(to right, #e0f7fa, #e8f5e9);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 20px;
     }
-
-    /* Título */
+    .contenedor {
+      max-width: 600px;
+    }
     h2 {
-      color: #004080;
+      color: #0d47a1;
     }
-
-    /* Estilo de etiquetas y controles */
-    label, input, button {
-      font-size: 16px;
-      margin: 5px;
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
     }
-
-    /* Botón con diseño atractivo */
+    input {
+      width: 100%;
+      padding: 5px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
     button {
-      background-color: #004080;
+      margin-top: 15px;
+      background-color: #01579b;
       color: white;
-      padding: 5px 15px;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
-
-    /* Resultado del cálculo */
+    button:hover {
+      background-color: #0277bd;
+    }
     #resultado {
       margin-top: 20px;
-      font-weight: bold;
+      font-size: 1.4em;
       color: green;
+      font-weight: bold;
+    }
+    .explicacion {
+      max-width: 500px;
+      background-color: #ffffffcc;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #cfd8dc;
     }
   </style>
 </head>
 <body>
-  <!-- Título principal del simulador -->
-  <h2>Simulador de distancia en MRU</h2>
 
-  <!-- Entrada para la velocidad -->
-  <label for="vel">Velocidad (m/s): </label>
-  <input type="number" id="vel"><br><br>
+  <!-- Sección izquierda: Simulador -->
+  <div class="contenedor">
+    <h2>Simulador de distancia en MRU</h2>
 
-  <!-- Entrada para el tiempo -->
-  <label for="tiempo">Tiempo (s): </label>
-  <input type="number" id="tiempo"><br><br>
+    <label for="vel">Velocidad (m/s):</label>
+    <input type="number" id="vel" placeholder="Ej. 10" />
 
-  <!-- Botón para calcular la distancia -->
-  <button onclick="calcular()">Calcular distancia</button>
+    <label for="tiempo">Tiempo (s):</label>
+    <input type="number" id="tiempo" placeholder="Ej. 5" />
 
-  <!-- Resultado mostrado al usuario -->
-  <p id="resultado"></p>
+    <button onclick="calcular()">Calcular distancia</button>
+
+    <p id="resultado"></p>
+  </div>
+
+  <!-- Sección derecha: Explicación del MRU -->
+  <div class="explicacion">
+    <h2>¿Qué es el MRU?</h2>
+    <p>
+      El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> es un tipo de movimiento en línea recta donde la velocidad permanece constante y no hay aceleración.
+    </p>
+    <p>
+      La fórmula para calcular la distancia recorrida es:
+    </p>
+    <p style="text-align:center; font-size: 1.2em;">
+      <strong>d = v × t</strong>
+    </p>
+    <ul>
+      <li><strong>d</strong>: distancia en metros (m)</li>
+      <li><strong>v</strong>: velocidad en metros por segundo (m/s)</li>
+      <li><strong>t</strong>: tiempo en segundos (s)</li>
+    </ul>
+    <p>
+      Este simulador permite que puedas experimentar cómo cambia la distancia en función de la velocidad y el tiempo.
+    </p>
+  </div>
 
   <script>
-    // Función que realiza el cálculo de distancia
+    // Función que calcula la distancia en MRU: d = v × t
     function calcular() {
-      let v = parseFloat(document.getElementById("vel").value);   // Obtiene velocidad
-      let t = parseFloat(document.getElementById("tiempo").value); // Obtiene tiempo
-      let resultado = document.getElementById("resultado");        // Área de resultado
-
-      // Validación: si hay valores inválidos
-      if (isNaN(v) || isNaN(t)) {
-        resultado.innerText = "⚠️ Ingresa valores válidos para velocidad y tiempo.";
-        return;
-      }
-
-      // Validación: si hay números negativos
-      if (v < 0 || t < 0) {
-        resultado.innerText = "⚠️ Los valores no pueden ser negativos.";
-        return;
-      }
-
-      // Cálculo de distancia: MRU = velocidad × tiempo
+      let v = parseFloat(document.getElementById("vel").value);
+      let t = parseFloat(document.getElementById("tiempo").value);
       let d = v * t;
-      resultado.innerText = "Distancia = " + d.toFixed(2) + " metros";
+
+      if (isNaN(v) || isNaN(t) || v < 0 || t < 0) {
+        document.getElementById("resultado").innerText =
+          "⚠️ Por favor, ingresa valores válidos y positivos.";
+        return;
+      }
+
+      document.getElementById("resultado").innerText =
+        "Distancia = " + d.toFixed(2) + " metros";
     }
   </script>
 </body>
